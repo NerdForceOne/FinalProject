@@ -83,6 +83,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 /*
  * Tiva Communication Initialization
@@ -106,6 +107,13 @@ void wait(){
     return;
 }
 
+void tDelay(int ms){
+    int i,j;
+    for(i=0;i<ms;i++)
+    for(j=0;j<3180;j++)
+    {}
+}
+
 /*
  * OpenLCD Command Functions
  */
@@ -117,7 +125,7 @@ void LCD_Clear(){
     return;
 }
 
-void LCD_SetRGB(unsigned char R, unsigned char G, unsigned char B){
+void LCD_SetRGB(int r, int g, int b){
     /*
      * Changes the colour of the LCD Display Backlight
      */
@@ -125,13 +133,9 @@ void LCD_SetRGB(unsigned char R, unsigned char G, unsigned char B){
     SSI2_DR_R = SETTING_COMMAND;
     wait();
     SSI2_DR_R = SET_RGB_COMMAND;
-    wait();
-    SSI2_SR_R = R;
-    wait();
-    SSI2_SR_R = G;
-    wait();
-    SSI2_SR_R = B;
-    wait();
+    SSI2_DR_R = r;
+    SSI2_DR_R = g;
+    SSI2_DR_R = b;
     return;
 }
 
@@ -143,7 +147,7 @@ void LCD_SetCurPos(unsigned char row, unsigned char col){
     int rowOffsets[] = {0x00, 0x40};
 
     //Keep row/column values within range of diplay
-    if(row > 0){
+    /*if(row > 0){
         row = 0;
     }
     else if(row < MAX_ROWS){
@@ -155,7 +159,7 @@ void LCD_SetCurPos(unsigned char row, unsigned char col){
     }
     else if (col < MAX_COLUMNS){
         col = MAX_COLUMNS;
-    }
+    }*/
 
     //Issue Command
     SSI2_DR_R = SPECIAL_COMMAND;
@@ -194,8 +198,8 @@ void LCD_SendFloat(float data){
     char str[100];
     
     //Determine the sign of the float
-    char *sign = (d < 0) ? "-" : "";
-    float value = (d < 0) ? -d : d;
+    char *sign = (data < 0) ? "-" : "";
+    float value = (data < 0) ? -data : data;
     
     //Get the whole number part
     int whole = value;
@@ -208,12 +212,7 @@ void LCD_SendFloat(float data){
     LCD_SendStr(str);
 }
 
-void tDelay(int ms){
-    int i,j;
-    for(i=0;i<ms;i++)
-    for(j=0;j<3180;j++)
-    {}
-}
+
 
 
 #endif /* SERLCD_H_ */
