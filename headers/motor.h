@@ -64,8 +64,9 @@ void stepCW(){
      * Rotate the motor to its next clockwise position.
      *
      * If being implemented in a loop, should be paired
-     * with a reasonable delay time in between
+     * with delay time in between
      * position changes.
+     * (10ms is a crawl, 1ms is semi fast)
      */
     uint32_t curPos = GPIO_PORTA_DATA_R;
     switch (curPos){
@@ -91,8 +92,9 @@ void stepCCW(){
      * Rotate the motor to its next counter-clockwise position.
      *
      * If being implemented in a loop, should be paired
-     * with a reasonable delay time in between
+     * with delay time in between
      * position changes.
+     * (10ms is a crawl, 1ms is semi fast)
      */
     uint32_t curPos = GPIO_PORTA_DATA_R;
     switch (curPos){
