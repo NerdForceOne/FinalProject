@@ -5,6 +5,8 @@
  *      Author: Jared
  *      Version 1.0.0
  *      Changes:
+ *       1.0.1:
+ *          --Updated Comments and fixed menu selection bug
  *       1.0.0:
  *           --Header Created
  */
@@ -16,57 +18,94 @@
 
 //Defines
 /*
+ * The below diagram shows a visual of how the menu system works
+ * If you want to add an action to the menu you must add the action number
+ * to the switch case in the 'LoadMenu' function, and add what happens there
+ *
+ * A max of 10 items can be within a menu section, otherwise the system
+ * will be calling multiple selections at a time
+ *
+ * Main Menu           menu1    Action
+ * [choice 1 {0.1}] -> [1.1] -> [11] {can have an action done here}
+ *                     [1.2] -> [12] {something else here}
+ *                     [1.3] -> [13] {all of these places can have something different}
+ *                     menu2
+ * [choice 2 {0.2}] -> [2.1] -> [21] {anything can be triggered to happen}
+ *                     [2.2] -> [22] {you have lots of choices}
+ *                     [2.3] -> [23] {I think you understand how this works}
+ *                     [2.4] -> [24] {right now says "hehehehe"}
+ *                     menu3
+ * [choice 3 {0.3}] -> [3.1] -> [31]
+ *                     [3.2] -> [32]
+ *                     menu4
+ * [choice 4 {0.4}] -> [4.1] -> [41]
+ *                     [4.2] -> [42]
+ *                     [4.3] -> [43]
+ *                     [4.4] -> [44]
+ *                     [4.5] -> [45]
+ *                     menux
+ * [choice x {0.x}] -> [x.1] -> [x1]
+ *                     [x.2] -> [x2]
+ *                     [x.3] -> [x3]
+ *                     [x.4] -> [x4]
+ *                     [x.5] -> [x5]
+ *                     [x.6] -> [x6]
+ *                     [x.7] -> [x7]
+ *                     [x.8] -> [x8]
+ *                     [x.9] -> [x9]
+ *                     [x.10] -> [(x+1)0]
+ *
  * This is the Main Menu array format
  * if the number of rows change then make sure
  * to update the row count define
  */
 #define mainMenuRows 8
-char* mainMenu[mainMenuRows]=  {{"Choice 0"},
-                                {"Choice 1"},
+char* mainMenu[mainMenuRows]=  {{"Choice 1"},
                                 {"Choice 2"},
                                 {"Choice 3"},
                                 {"Choice 4"},
                                 {"Choice 5"},
                                 {"Choice 6"},
-                                {"Choice 7"}};
+                                {"Choice 7"},
+                                {"Choice 8"}};
 /*
  * This is the Menu 1 array format
  * if the number of rows change then make sure
  * to update the row count define
  */
 #define menu1Rows 3
-char* menu1[menu1Rows] = {{"menu1 0"},
-                          {"menu1 1"},
-                          {"menu1 2"}};
+char* menu1[menu1Rows] = {{"menu1 1"},
+                          {"menu1 2"},
+                          {"menu1 3"}};
 /*
  * This is the Menu 2 array format
  * if the number of rows change then make sure
  * to update the row count define
  */
 #define menu2Rows 4
-char* menu2[menu2Rows] = {{"menu2 0"},
-                          {"menu2 1"},
+char* menu2[menu2Rows] = {{"menu2 1"},
                           {"menu2 2"},
-                          {"menu2 3"}};
+                          {"menu2 3"},
+                          {"menu2 4"}};
 /*
  * This is the Menu 3 array format
  * if the number of rows change then make sure
  * to update the row count define
  */
 #define menu3Rows 2
-char* menu3[menu3Rows] = {{"menu3 0"},
-                          {"menu3 1"}};
+char* menu3[menu3Rows] = {{"menu3 1"},
+                          {"menu3 2"}};
 /*
  * This is the Menu 4 array format
  * if the number of rows change then make sure
  * to update the row count define
  */
 #define menu4Rows 5
-char* menu4[menu4Rows] = {{"menu4 0"},
-                          {"menu4 1"},
+char* menu4[menu4Rows] = {{"menu4 1"},
                           {"menu4 2"},
                           {"menu4 3"},
-                          {"menu4 4"}};
+                          {"menu4 4"},
+                          {"menu4 5"}};
 
 
 //Functions
@@ -322,26 +361,46 @@ void LoadMenu4(int *row)
  * Then add a case here that calls the function
  * Follow any of the other menus as a guide line
  */
-void LoadLCD(int *row,int menu)
+void LoadLCD(int *row,int *menu)
 {
-    switch(menu){
+    int loop = 1;
+    while(loop)
+    {
+    switch(*menu){
     case 0:
         LoadMainMenu(&*row);
+        loop = 0;
         break;
     case 1:
         LoadMenu1(&*row);
+        loop = 0;
         break;
     case 2:
         LoadMenu2(&*row);
+        loop = 0;
         break;
     case 3:
         LoadMenu3(&*row);
+        loop = 0;
         break;
     case 4:
         LoadMenu4(&*row);
+        loop = 0;
+        break;
+    case 24:
+        LCD_Clear();
+        LCD_SendStr("hehehehe");
+        loop = 0;
         break;
     default:
-        LoadMainMenu(&*row);
+        //your selection doesn't exist yet
+        //go back to current menu
+        LCD_Clear();
+        LCD_SendStr("Nothing There");
+        tDelay(400);
+        *menu = *menu/10;
+        break;
+    }
     }
 }
 /*
@@ -357,24 +416,24 @@ void checkInput(char key)
         {
         //if 2 (up) then go back a row position
             row--;
-            LoadLCD(&row,menu);
+            LoadLCD(&row,&menu);
         }else if(key == '8')
         {
             //if 8 (down) then go forward a row position
             row++;
-            LoadLCD(&row,menu);
+            LoadLCD(&row,&menu);
         }else if(key == '#')
         {
             //if # (select) the go forward a menu position
-            menu = row+1;
+            menu = (row+1)+(menu*10);
             row = 0;
-            LoadLCD(&row,menu);
+            LoadLCD(&row,&menu);
         }else if(key == '*')
         {
             //if * (back) then reset everything to default position (0)
             menu = 0;
             row = 0;
-            LoadLCD(&row,menu);
+            LoadLCD(&row,&menu);
         }
 }
 
