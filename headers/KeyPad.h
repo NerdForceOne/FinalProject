@@ -3,8 +3,10 @@
  *
  *  Created on: Apr. 6, 2021
  *      Author: Jared Riepert
- *      Version 1.0.0
+ *      Version 1.0.1
  *      Changes:
+ *       1.0.1:
+ *          --only check for input once
  *       1.0.0:
  *           --Header Created
  */
@@ -78,8 +80,8 @@ char Keypad_getkey(void)
 
     int i,j;
     //look until key is pressed
-    while(1)
-    {
+    //while(1)
+    //{
         //search each column
         for(i = 0; i < 3; i++)
         {
@@ -98,7 +100,8 @@ char Keypad_getkey(void)
                 }
             }
         }
-    }
+    //}
+        return '|';
 }
 
 
