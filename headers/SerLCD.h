@@ -153,7 +153,6 @@ void LCD_SetCurPos(unsigned char row, unsigned char col){
     else if(row < MAX_ROWS){
         row = MAX_ROWS;
     }
-
     if(col > 0){
         col = 0;
     }
@@ -193,21 +192,21 @@ void LCD_SendFloat(float data){
     *
     *For this function to work correctly the projects stack size must be set to 1024.
     *sprinf doesn't play well with lower values.
-    
+
     */
     char str[100];
-    
+
     //Determine the sign of the float
     char *sign = (data < 0) ? "-" : "";
     float value = (data < 0) ? -data : data;
-    
+
     //Get the whole number part
     int whole = value;
     //Get the values after decimal
     float fraction = value - whole;
     //Convert value of fraction to an integer
     int decimal = trunc(fraction * 1000);
-    
+
     sprintf(str, "%s%d.%03d", sign, whole, decimal);
     LCD_SendStr(str);
 }
