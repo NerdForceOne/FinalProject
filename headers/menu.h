@@ -3,7 +3,7 @@
  *
  *  Created on: Apr. 15, 2021
  *      Author: Jared
- *      Version 1.0.0
+ *      Version 1.0.1
  *      Changes:
  *       1.0.1:
  *          --Updated Comments and fixed menu selection bug
@@ -15,6 +15,8 @@
 
 //Includes
 #include <SerLCD.h>
+#include <motor.h>
+#include <LightSensor.h>
 
 //Defines
 /*
@@ -33,7 +35,7 @@
  * [choice 2 {0.2}] -> [2.1] -> [21] {anything can be triggered to happen}
  *                     [2.2] -> [22] {you have lots of choices}
  *                     [2.3] -> [23] {I think you understand how this works}
- *                     [2.4] -> [24] {right now says "hehehehe"}
+ *                     [2.4] -> [24]
  *                     menu3
  * [choice 3 {0.3}] -> [3.1] -> [31]
  *                     [3.2] -> [32]
@@ -59,34 +61,29 @@
  * if the number of rows change then make sure
  * to update the row count define
  */
-#define mainMenuRows 8
-char* mainMenu[mainMenuRows]=  {{"Choice 1"},
-                                {"Choice 2"},
-                                {"Choice 3"},
-                                {"Choice 4"},
-                                {"Choice 5"},
-                                {"Choice 6"},
-                                {"Choice 7"},
-                                {"Choice 8"}};
+#define mainMenuRows 3
+char* mainMenu[mainMenuRows]=  {{"Motor Controls"},
+                                {"Light Tracking"},
+                                {"something"}};
 /*
  * This is the Menu 1 array format
  * if the number of rows change then make sure
  * to update the row count define
  */
 #define menu1Rows 3
-char* menu1[menu1Rows] = {{"menu1 1"},
-                          {"menu1 2"},
-                          {"menu1 3"}};
+char* menu1[menu1Rows] = {{"Go To 0"},
+                          {"Go Far Left"},
+                          {"Go Far Right"}};
 /*
  * This is the Menu 2 array format
  * if the number of rows change then make sure
  * to update the row count define
  */
 #define menu2Rows 4
-char* menu2[menu2Rows] = {{"menu2 1"},
-                          {"menu2 2"},
-                          {"menu2 3"},
-                          {"menu2 4"}};
+char* menu2[menu2Rows] = {{"Scan"},
+                          {"Read Value"},
+                          {"--1--"},
+                          {"--2--"}};
 /*
  * This is the Menu 3 array format
  * if the number of rows change then make sure
@@ -387,18 +384,42 @@ void LoadLCD(int *row,int *menu)
         LoadMenu4(&*row);
         loop = 0;
         break;
-    case 24:
-        LCD_Clear();
-        LCD_SendStr("hehehehe");
+    case 11:
+        goToZero();
         loop = 0;
+        *menu = 0;
+        break;
+    case 12:
+        goFarLeft();
+        loop = 0;
+        *menu = 0;
+        break;
+    case 13:
+        goFarRight();
+        loop = 0;
+        *menu = 0;
+        break;
+    case 21:
+        scan();
+        loop = 0;
+        *menu = 0;
+        break;
+    case 22:
+        LCD_Clear();
+        LCD_SendStr("Value = ");
+        LCD_SendFloat((float)ReadLight());
+        tDelay(1000);
+        loop = 0;
+        *menu = 0;
         break;
     default:
         //your selection doesn't exist yet
-        //go back to current menu
+        //go back to main menu
         LCD_Clear();
-        LCD_SendStr("Nothing There");
-        tDelay(400);
-        *menu = *menu/10;
+        LCD_SendStr("Nothing at menu ");
+        LCD_SendFloat((float)*menu);
+        tDelay(1000);
+        *menu = 0;
         break;
     }
     }
@@ -425,7 +446,7 @@ void checkInput(char key)
         }else if(key == '#')
         {
             //if # (select) the go forward a menu position
-            menu = (row+1)+(menu*10);
+            menu = (++row)+(menu*10);
             row = 0;
             LoadLCD(&row,&menu);
         }else if(key == '*')
