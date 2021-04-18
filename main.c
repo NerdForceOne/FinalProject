@@ -5,11 +5,13 @@
 #include <LightSensor.h>
 #include <KeyPad.h>
 #include <Bluetooth.h>
+#include <menu.h>
 
 /**
  * main.c
  */
-int main(void)
+
+void main(void)
 {
     //Component initialization
     LCD_SPI();
@@ -22,22 +24,17 @@ int main(void)
     //LCD setup
     LCD_Clear();
     LCD_SetRGB(255,255,255);
-
+    tDelay(300);
+    checkInput('*');
 
     while(1)
     {
-        float voltage = GetLightVoltage();
-        LCD_SetCurPos(0,0);
-        LCD_SendStr("ADC0= ");
-        LCD_SetCurPos(1,0);
-        LCD_SendStr("ADC1= ");
-
-        LCD_SetCurPos(0,6);
-        LCD_SendFloat(voltage);
-        LCD_SetCurPos(1,6);
-        LCD_SendFloat(voltage+1);
-        tDelay(600);
+        char key = Keypad_getkey();
+        if(key == '|')
+        {
+            key = Bluetooth_Read();
+        }
+        checkInput(key);
     }
 
-	return 0;
 }
