@@ -3,8 +3,10 @@
  *
  *  Created on: Apr. 6, 2021
  *      Author: Jared Riepert
- *      Version 1.0.0
+ *      Version 1.0.1
  *      Changes:
+ *       1.0.1:
+ *          --check for signal only once real fast
  *       1.0.0:
  *           --Header Created
  */
@@ -68,10 +70,19 @@ char Bluetooth_Read(void)
      * and return it as a char
      */
 
+    int waitTime = 0;
     char data;
-      while((UART2_FR_R & (1<<4)) != 0); /* wait until Rx buffer is not full */
+      while((UART2_FR_R & (1<<4)) != 0 && waitTime < 500) /* wait until Rx buffer is not full */
+      {
+          waitTime++;
+      }
+      if(waitTime < 500)
+      {
     data = UART2_DR_R ;      /* before giving it another byte */
     return (unsigned char) data;
+      }else{
+          return '|';
+      }
 }
 
 #endif /* BLUETOOTH_H_ */
