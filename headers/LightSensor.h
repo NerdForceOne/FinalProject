@@ -3,14 +3,20 @@
  *
  *  Created on: Apr. 6, 2021
  *      Author: Jared Riepert
- *      Version 1.0.0
+ *      Version 1.0.1
  *      Changes:
+ *       1.0.1:
+ *          --Added Scan Function
  *       1.0.0:
  *           --Header Created
  */
 
 #ifndef LIGHTSENSOR_H_
 #define LIGHTSENSOR_H_
+
+#include <motor.h>
+#include <SerLCD.h>
+
 /*
  * Define EK-TM4C123GXL Register Addresses
  */
@@ -88,5 +94,74 @@ float GetLightVoltage(){
      */
 
     return (ReadLight() * 0.0008);
+}
+
+void scan()
+{
+    LCD_Clear();
+    LCD_SendStr("Searching...");
+    tDelay(50);
+    goToZero();
+    int angle = getAngle();
+    float topValue = 0;
+    float currentValue = 0;
+    int topValueAngle = 0;
+
+ //1 clockwise, 2 counter clockwise
+    int direction = 1;
+    if(direction == 1)
+     {
+        while(angle<range)
+        {
+             currentValue = ReadLight();
+             tDelay(1);
+             if(currentValue > topValue)
+             {
+                 topValue = currentValue;
+                 topValueAngle = angle;
+             }
+             stepCW();
+             tDelay(3);
+             angle++;
+         }
+         direction = 2;
+     }
+    if(direction == 2)
+     {
+         while(angle>0)
+         {
+             currentValue = ReadLight();
+             tDelay(1);
+              if(currentValue > topValue)
+              {
+                  topValue = currentValue;
+                  topValueAngle = angle;
+              }
+             stepCCW();
+             tDelay(3);
+             angle--;
+         }
+         direction = 1;
+     }
+    while(angle<topValueAngle)
+    {
+        stepCW();
+        tDelay(3);
+        angle++;
+    }
+    while(angle>topValueAngle)
+    {
+        stepCCW();
+        tDelay(3);
+        angle--;
+    }
+    LCD_Clear();
+    LCD_SetCurPos(0,0);
+    LCD_SendStr("Found Light!");
+    tDelay(50);
+    LCD_SetCurPos(1,0);
+    LCD_SendStr("Value = ");
+    LCD_SendFloat(topValue);
+    updateAngle(angle);
 }
 #endif /* LIGHTSENSOR_H_ */
