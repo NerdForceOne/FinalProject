@@ -3,8 +3,10 @@
  *
  *  Created on: Mar. 29, 2021
  *      Author: Owen Cantor
- *      Version 1.0.1
+ *      Version 1.0.2
  *      Changes:
+ *      1.0.2:
+ *          --Added motor control functions (Jared Riepert)
  *      1.0.1:
  *          --Fixed error in comments that referred to Port F instead of Port A
 *       1.0.0:
@@ -14,6 +16,12 @@
 #ifndef HEADERS_MOTOR_H_
 #define HEADERS_MOTOR_H_
 #include <stdint.h>
+
+//the limited range of the motor
+#define range 850
+#define motorSpeed 3
+int angle = range/2;
+
 /*
  * Define EK-TM4C123GXL Register Addresses
  */
@@ -64,9 +72,8 @@ void stepCW(){
      * Rotate the motor to its next clockwise position.
      *
      * If being implemented in a loop, should be paired
-     * with delay time in between
+     * with a reasonable delay time in between
      * position changes.
-     * (10ms is a crawl, 1ms is semi fast)
      */
     uint32_t curPos = GPIO_PORTA_DATA_R;
     switch (curPos){
@@ -92,9 +99,8 @@ void stepCCW(){
      * Rotate the motor to its next counter-clockwise position.
      *
      * If being implemented in a loop, should be paired
-     * with delay time in between
+     * with a reasonable delay time in between
      * position changes.
-     * (10ms is a crawl, 1ms is semi fast)
      */
     uint32_t curPos = GPIO_PORTA_DATA_R;
     switch (curPos){
@@ -116,5 +122,42 @@ void stepCCW(){
     }
 }
 
+void goToZero(){
+    while(angle < range/2)
+    {
+        stepCW();
+        tDelay(motorSpeed);
+        angle++;
+    }
+    while(angle > range/2)
+        {
+            stepCCW();
+            tDelay(motorSpeed);
+            angle--;
+        }
+}
+void goFarLeft(){
+    while(angle < range)
+        {
+            stepCW();
+            tDelay(motorSpeed);
+            angle++;
+        }
+}
+void goFarRight(){
+    while(angle > 0)
+        {
+            stepCCW();
+            tDelay(motorSpeed);
+            angle--;
+        }
+}
+void updateAngle(int newAngle){
+    angle = newAngle;
+}
+int getAngle()
+{
+    return angle;
+}
 
 #endif /* HEADERS_MOTOR_H_ */
