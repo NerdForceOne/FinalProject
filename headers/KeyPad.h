@@ -3,8 +3,10 @@
  *
  *  Created on: Apr. 6, 2021
  *      Author: Jared Riepert
- *      Version 1.0.1
+ *      Version 1.0.2
  *      Changes:
+ *       1.0.2:
+ *          --added more comments
  *       1.0.1:
  *          --only check for input once
  *       1.0.0:
@@ -76,12 +78,10 @@ char Keypad_getkey(void)
     /*
      * Get the value of a key pressed on the keypad
      * function will wait forever until key is pressed
+     * This function will only check through each key once
      */
 
     int i,j;
-    //look until key is pressed
-    //while(1)
-    //{
         //search each column
         for(i = 0; i < 3; i++)
         {
@@ -100,7 +100,7 @@ char Keypad_getkey(void)
                 }
             }
         }
-    //}
+        //if no key was pressed return the code '|'
         return '|';
 }
 
