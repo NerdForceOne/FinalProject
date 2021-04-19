@@ -3,8 +3,10 @@
  *
  *  Created on: Apr. 6, 2021
  *      Author: Jared Riepert
- *      Version 1.0.1
+ *      Version 1.0.2
  *      Changes:
+ *       1.0.2:
+ *          --Added more comments
  *       1.0.1:
  *          --Added Scan Function
  *       1.0.0:
@@ -96,21 +98,31 @@ float GetLightVoltage(){
     return (ReadLight() * 0.0008);
 }
 
+/*
+ * This function will scane the entire range looking for the brightest light source
+ * Once the brightest light source has been found it will sit at the location
+ */
 void scan()
 {
+    //tell the user it is looking
     LCD_Clear();
     LCD_SendStr("Searching...");
     tDelay(50);
+    //reset panel to starting spot
     goToZero();
+    //needed variables
     int angle = getAngle();
     float topValue = 0;
     float currentValue = 0;
     int topValueAngle = 0;
 
  //1 clockwise, 2 counter clockwise
+    //start by moving clockwise, read after every move and check to see if that
+    //value is the biggest value seen
     int direction = 1;
     if(direction == 1)
      {
+        //while in range move clockwise
         while(angle<range)
         {
              currentValue = ReadLight();
@@ -126,8 +138,11 @@ void scan()
          }
          direction = 2;
      }
+    //now move counter clockwise all the way to the other limit seeing if any bigger 
+    //values are over there
     if(direction == 2)
      {
+        //while in range
          while(angle>0)
          {
              currentValue = ReadLight();
@@ -143,6 +158,8 @@ void scan()
          }
          direction = 1;
      }
+    //now that all angles have been checked return to the position that had
+    //the greatest value recorded
     while(angle<topValueAngle)
     {
         stepCW();
@@ -155,6 +172,8 @@ void scan()
         tDelay(3);
         angle--;
     }
+    //stop at the location with the greatest value and tell the user you
+    //found the best spot and the value at that spot
     LCD_Clear();
     LCD_SetCurPos(0,0);
     LCD_SendStr("Found Light!");
