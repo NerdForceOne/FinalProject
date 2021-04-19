@@ -3,8 +3,10 @@
  *
  *  Created on: Mar. 29, 2021
  *      Author: Owen Cantor
- *      Version 1.0.2
+ *      Version 1.0.3
  *      Changes:
+ *      1.0.3:
+ *          --Added more comments
  *      1.0.2:
  *          --Added motor control functions (Jared Riepert)
  *      1.0.1:
@@ -121,7 +123,9 @@ void stepCCW(){
 
     }
 }
-
+/*
+ * This function will return the solar panel to the starting location
+ */
 void goToZero(){
     while(angle < range/2)
     {
@@ -136,6 +140,9 @@ void goToZero(){
             angle--;
         }
 }
+/*
+ * This function will go to the extreme left position 
+ */
 void goFarLeft(){
     while(angle < range)
         {
@@ -144,6 +151,9 @@ void goFarLeft(){
             angle++;
         }
 }
+/*
+ * This function will go to the extreme right position 
+ */
 void goFarRight(){
     while(angle > 0)
         {
@@ -152,12 +162,39 @@ void goFarRight(){
             angle--;
         }
 }
+/*
+ * This function will update the global angle value
+ */
 void updateAngle(int newAngle){
     angle = newAngle;
 }
+/*
+ * This function will get the global angle value
+ */
 int getAngle()
 {
     return angle;
 }
-
+/*
+ * This function will re write the global angle value
+ * This is used for when the starting location is rewritten
+ */
+void resetAngle()
+{
+    angle = range/2;
+}
+/*
+ * This function will decrease the global angle value
+ */
+void decreaseAngle()
+{
+    angle--;
+}
+/*
+ * This function will increase the global angle value
+ */
+void increaseAngle()
+{
+    angle++;
+}
 #endif /* HEADERS_MOTOR_H_ */
