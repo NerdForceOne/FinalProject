@@ -3,8 +3,10 @@
  *
  *  Created on: Mar. 30, 2021
  *      Author: Owen Cantor
- *      Version: 1.0.0
+ *      Version: 1.0.1
  *      Changes:
+ *      1.0.1:
+ *          --Added Long buzz function
 *       1.0.0:
  *          --Header File Created
  */
@@ -12,6 +14,7 @@
 #ifndef HEADERS_BUZZER_H_
 #define HEADERS_BUZZER_H_
 #include <stdint.h>
+#include <SerLCD.h>
 /*
  * Define EK-TM4C123GXL Register Addresses
  */
@@ -76,5 +79,18 @@ void buzz(){
     GPIO_PORTA_DATA_R = 0x00;
     tDelay_us(1135);
     return;
+}
+
+/*
+ * This is the Buzz function in a loop
+ */
+void longBuzz(){
+    int count = 0;
+    while(count < 10)
+    {
+        buzz();
+        tDelay(5);
+        count++;
+    }
 }
 #endif /* HEADERS_BUZZER_H_ */
