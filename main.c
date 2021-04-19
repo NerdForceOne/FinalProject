@@ -6,6 +6,8 @@
 #include <KeyPad.h>
 #include <Bluetooth.h>
 #include <menu.h>
+#include <Tracking.h>
+#include <stdbool.h>
 
 /**
  * main.c
@@ -29,12 +31,25 @@ void main(void)
 
     while(1)
     {
+        bool iftrack = false;
         char key = Keypad_getkey();
         if(key == '|')
         {
             key = Bluetooth_Read();
         }
+        if(key == '*')
+        {
+                setTracking(false);
+                iftrack = false;
+        }
         checkInput(key);
+
+        if(getTracking()==true)
+        {
+            iftrack = true;
+            track();
+            tDelay(1000);
+        }
     }
 
 }
