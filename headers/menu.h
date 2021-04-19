@@ -3,8 +3,10 @@
  *
  *  Created on: Apr. 15, 2021
  *      Author: Jared
- *      Version 1.0.1
+ *      Version 1.0.2
  *      Changes:
+ *       1.0.2:
+ *          --Adjusted for most recent features
  *       1.0.1:
  *          --Updated Comments and fixed menu selection bug
  *       1.0.0:
@@ -17,6 +19,8 @@
 #include <SerLCD.h>
 #include <motor.h>
 #include <LightSensor.h>
+#include <KeyPad.h>
+#include <stdbool.h>
 
 //Defines
 /*
@@ -61,29 +65,28 @@
  * if the number of rows change then make sure
  * to update the row count define
  */
-#define mainMenuRows 3
+#define mainMenuRows 2
 char* mainMenu[mainMenuRows]=  {{"Motor Controls"},
-                                {"Light Tracking"},
-                                {"something"}};
+                                {"Light Tracking"}};
 /*
  * This is the Menu 1 array format
  * if the number of rows change then make sure
  * to update the row count define
  */
-#define menu1Rows 3
+#define menu1Rows 4
 char* menu1[menu1Rows] = {{"Go To 0"},
-                          {"Go Far Left"},
-                          {"Go Far Right"}};
+                          {"Hold to go CW"},
+                          {"Hold to go CCW"},
+                          {"Set new 0"}};
 /*
  * This is the Menu 2 array format
  * if the number of rows change then make sure
  * to update the row count define
  */
-#define menu2Rows 4
+#define menu2Rows 3
 char* menu2[menu2Rows] = {{"Scan"},
                           {"Read Value"},
-                          {"--1--"},
-                          {"--2--"}};
+                          {"Turn on Track"}};
 /*
  * This is the Menu 3 array format
  * if the number of rows change then make sure
@@ -386,17 +389,31 @@ void LoadLCD(int *row,int *menu)
         break;
     case 11:
         goToZero();
-        loop = 0;
         *menu = 0;
         break;
     case 12:
-        goFarLeft();
-        loop = 0;
+        while(Keypad_getkey()=='#')
+        {
+            stepCW();
+            tDelay(3);
+            increaseAngle();
+        }
         *menu = 0;
         break;
     case 13:
-        goFarRight();
-        loop = 0;
+        while(Keypad_getkey()=='#')
+        {
+            stepCCW();
+            tDelay(3);
+            decreaseAngle();
+        }
+        *menu = 0;
+        break;
+    case 14:
+        resetAngle();
+        LCD_Clear();
+        LCD_SendStr("New 0 Set!");
+        tDelay(400);
         *menu = 0;
         break;
     case 21:
@@ -410,6 +427,13 @@ void LoadLCD(int *row,int *menu)
         LCD_SendFloat((float)ReadLight());
         tDelay(1000);
         loop = 0;
+        *menu = 0;
+        break;
+    case 23:
+        setTracking(true);
+        LCD_Clear();
+        LCD_SendStr("Tracking is ON!");
+        tDelay(400);
         *menu = 0;
         break;
     default:
