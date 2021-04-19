@@ -73,11 +73,13 @@ char* mainMenu[mainMenuRows]=  {{"Motor Controls"},
  * if the number of rows change then make sure
  * to update the row count define
  */
-#define menu1Rows 4
+#define menu1Rows 6
 char* menu1[menu1Rows] = {{"Go To 0"},
                           {"Hold to go CW"},
                           {"Hold to go CCW"},
-                          {"Set new 0"}};
+                          {"Set new 0"},
+                          {"Go Far Left"},
+                          {"Go Far Right"}};
 /*
  * This is the Menu 2 array format
  * if the number of rows change then make sure
@@ -416,6 +418,18 @@ void LoadLCD(int *row,int *menu)
         tDelay(400);
         *menu = 0;
         break;
+    case 15:
+        LCD_Clear();
+        LCD_SendStr("Going Left!");
+        goFarLeft();
+        *menu = 0;
+        break;
+    case 16:
+        LCD_Clear();
+        LCD_SendStr("Going Right!");
+        goFarRight();
+        *menu = 0;
+        break;
     case 21:
         scan();
         loop = 0;
@@ -470,12 +484,14 @@ void checkInput(char key)
         }else if(key == '#')
         {
             //if # (select) the go forward a menu position
+            longBuzz();
             menu = (++row)+(menu*10);
             row = 0;
             LoadLCD(&row,&menu);
         }else if(key == '*')
         {
             //if * (back) then reset everything to default position (0)
+            longBuzz();
             menu = 0;
             row = 0;
             LoadLCD(&row,&menu);
