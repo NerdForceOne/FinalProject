@@ -3,8 +3,10 @@
  *
  *  Created on: Apr. 6, 2021
  *      Author: Jared Riepert
- *      Version 1.0.1
+ *      Version 1.0.2
  *      Changes:
+ *       1.0.2
+ *          --added more comments
  *       1.0.1:
  *          --check for signal only once real fast
  *       1.0.0:
@@ -68,6 +70,7 @@ char Bluetooth_Read(void)
     /*
      * This function will listen for a new input from Bluetooth
      * and return it as a char
+     * It will only check for a brief second before giving up
      */
 
     int waitTime = 0;
@@ -80,6 +83,7 @@ char Bluetooth_Read(void)
       {
     data = UART2_DR_R ;      /* before giving it another byte */
     return (unsigned char) data;
+    //if timer exceeded then give up and return a given up code '|'
       }else{
           return '|';
       }
